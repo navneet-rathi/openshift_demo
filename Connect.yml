@@ -1,0 +1,26 @@
+---
+- name: Validate OpenShift Connection
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  tasks:
+    - name: Check cluster nodes status
+      kubernetes.core.k8s_info:
+        api_version: v1
+        kind: Node
+        # You can specify kubeconfig and context if not using AAP credentials
+        # kubeconfig: /path/to/kubeconfig
+      register: nodes_info
+      # Use the configured AAP credential name here
+      # vars:
+      #   ansible_kubernetes_kubeconfig_ansible_credential: OpenShift-Kubeconfig
+
+    - name: Display node names and status
+      ansible.builtin.debug:
+        msg: "Node {{ item.metadata.name }} status: {{ item.status.conditions | selectattr('type', 'equalto', 'Ready') | first | json_query('status') }}"
+      loop: "{{ nodes_info.resources }}"
+      when: nodes_info.resources is defined
+
+    - name: Report successful connection
+      ansible.builtin.debug:
+        msg: "Successfully connected to the OpenShift cluster and retrieved node information."
