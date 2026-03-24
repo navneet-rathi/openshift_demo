@@ -9,11 +9,7 @@
     rhel_image: "quay.io/containerdisks/rhel:9-full" # Example RHEL container disk
 
   tasks:
-    # - name: Ensure Namespace exists
-    #   kubernetes.core.k8s:
-    #   name: "{{ namespace }}"
-    #   kind: Namespace
-    #   state: present
+
 
     - name: Create RHEL 9 VirtualMachine
       kubernetes.core.k8s:
@@ -39,7 +35,7 @@
             resourceVersion: '98866'
             name: "{{vm_name}}"
             generation: 3
-            namespace: default
+            namespace: "{{ namespace }}"
             finalizers:
               - kubevirt.io/virtualMachineControllerFinalize
             labels:
