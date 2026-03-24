@@ -15,7 +15,7 @@
       loop: "{{ vm_list.resources }}"
 
     # 3. Shutdown each VM found in the list
-    - name: Shut down all discovered VMs
+    - name: Start all discovered VMs
       kubevirt.core.kubevirt_vm:
         name: "{{ item.metadata.name }}"
         namespace: "{{ item.metadata.namespace }}"
