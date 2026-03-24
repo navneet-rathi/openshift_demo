@@ -1,23 +1,26 @@
 ---
-- name: Get all VirtualMachines in the namespace
-  redhat.openshift_virtualization.kubevirt_vm_info:
-    namespace: "{{ vm_namespace }}"
-  register: vm_info
+- name: List and Shutdown All VMs in OpenShift
+  hosts: localhost
+  connection: local
+  tasks:
+    # 1. Gather information about all Virtual Machines
+    - name: Get a list of all VirtualMachines from any namespace
+      kubevirt.core.kubevirt_vm_info:
+      register: vm_list
 
-- name: Debug the vm_info variable
-  ansible.builtin.debug:
-    var: vm_info
+    # 2. Display the names of the VMs being shut down
+    - name: List found VMs
+      debug:
+        msg: "Found VM: {{ item.metadata.name }} in namespace {{ item.metadata.namespace }}"
+      loop: "{{ vm_list.resources }}"
 
-- name: Start VM using OpenShift API
-  ansible.builtin.uri:
-    url: "{{ OCP_HOST }}/apis/subresources.kubevirt.io/v1/namespaces/{{ vm_namespace }}/virtualmachines/{{ item.metadata.name }}/start"
-    method: PUT
-    headers:
-      Authorization: "Bearer {{ OCP_BEARER_TOKEN }}"
-    validate_certs: false
-    status_code:
-      - 202
-  loop: "{{ vm_info.resources }}"
-  loop_control:
-    label: "{{ item.metadata.name }}"
-  changed_when: item.status.printableStatus != "Running"
+    # 3. Shutdown each VM found in the list
+    - name: Shut down all discovered VMs
+      kubevirt.core.kubevirt_vm:
+        name: "{{ item.metadata.name }}"
+        namespace: "{{ item.metadata.namespace }}"
+        state: present
+        running: yes
+        wait: yes  # Wait for the VM to fully stop before finishing the task
+      loop: "{{ vm_list.resources }}"
+      when: vm_list.resources | length > 0
