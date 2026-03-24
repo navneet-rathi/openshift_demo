@@ -36,7 +36,6 @@
               - apiVersion: cdi.kubevirt.io/v1beta1
                 kind: DataVolume
                 metadata:
-                  creationTimestamp: null
                   name: "{{vm_name}}"
                 spec:
                   sourceRef:
@@ -54,7 +53,6 @@
                   vm.kubevirt.io/flavor: small
                   vm.kubevirt.io/os: rhel9
                   vm.kubevirt.io/workload: server
-                creationTimestamp: null
                 labels:
                   kubevirt.io/domain: "{{vm_name}}"
                   kubevirt.io/size: small
