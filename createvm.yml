@@ -9,11 +9,11 @@
     rhel_image: "quay.io/containerdisks/rhel:9-full" # Example RHEL container disk
 
   tasks:
-    - name: Ensure Namespace exists
-      kubernetes.core.k8s:
-      name: "{{ namespace }}"
-      kind: Namespace
-      state: present
+    # - name: Ensure Namespace exists
+    #   kubernetes.core.k8s:
+    #   name: "{{ namespace }}"
+    #   kind: Namespace
+    #   state: present
 
     - name: Create RHEL 9 VirtualMachine
       kubernetes.core.k8s:
