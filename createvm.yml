@@ -59,6 +59,6 @@
                   - sshPublicKey:
                       source:
                         sshPublicKey:
-                          secretName: my-ssh-key
+                          secretName: nrathi-key
                       propagationMethod:
                         configDrive: {}
