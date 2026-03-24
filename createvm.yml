@@ -9,8 +9,6 @@
     rhel_image: "quay.io/containerdisks/rhel:9-full" # Example RHEL container disk
 
   tasks:
-
-
     - name: Create RHEL 9 VirtualMachine
       kubernetes.core.k8s:
         state: present
@@ -19,19 +17,8 @@
           kind: VirtualMachine
           metadata:
             annotations:
-              kubemacpool.io/transaction-timestamp: '2026-03-24T11:54:23.300038052Z'
               kubevirt.io/latest-observed-api-version: v1
               kubevirt.io/storage-observed-api-version: v1
-              vm.kubevirt.io/validations: |
-                [
-                  {
-                    "name": "minimal-required-memory",
-                    "path": "jsonpath::.spec.domain.memory.guest",
-                    "rule": "integer",
-                    "message": "This VM requires more memory.",
-                    "min": 1610612736
-                  }
-                ]
             resourceVersion: '98866'
             name: "{{vm_name}}"
             generation: 3
