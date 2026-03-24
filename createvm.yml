@@ -1,0 +1,64 @@
+---
+- name: Create RHEL VM on OpenShift Virtualization
+  hosts: localhost
+  connection: local
+  vars:
+    vm_name: "rhel9-web-server"
+    namespace: "default"
+    storage_class: "ocs-storagecluster-ceph-rbd" # Change to your RWX storage class
+    rhel_image: "quay.io/containerdisks/rhel:9-full" # Example RHEL container disk
+
+  tasks:
+    - name: Ensure Namespace exists
+      kubernetes.core.k8s:
+      name: "{{ namespace }}"
+      kind: Namespace
+      state: present
+
+    - name: Create RHEL 9 VirtualMachine
+      kubernetes.core.k8s:
+        state: present
+        definition:
+          apiVersion: kubevirt.io/v1
+          kind: VirtualMachine
+          metadata:
+            name: "{{ vm_name }}"
+            namespace: "{{ namespace }}"
+            labels:
+              app: rhel9-vm
+          spec:
+            running: true
+            template:
+              metadata:
+                labels:
+                  kubevirt.io/domain: "{{ vm_name }}"
+              spec:
+                domain:
+                  cpu:
+                    cores: 2
+                  resources:
+                    requests:
+                      memory: 4Gi
+                  devices:
+                    disks:
+                      - name: rootdisk
+                        disk:
+                          bus: virtio
+                    interfaces:
+                      - name: default
+                        masquerade: {}
+                networks:
+                  - name: default
+                    pod: {}
+                volumes:
+                  - name: rootdisk
+                    containerDisk:
+                      image: "{{ rhel_image }}"
+                # Cloud-init for initial setup (User: admin, Password: password123)
+                accessCredentials:
+                  - sshPublicKey:
+                      source:
+                        sshPublicKey:
+                          secretName: my-ssh-key
+                      propagationMethod:
+                        configDrive: {}
