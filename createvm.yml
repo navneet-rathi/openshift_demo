@@ -19,7 +19,6 @@
             annotations:
               kubevirt.io/latest-observed-api-version: v1
               kubevirt.io/storage-observed-api-version: v1
-            resourceVersion: '98866'
             name: "{{vm_name}}"
             generation: 3
             namespace: "{{ namespace }}"
