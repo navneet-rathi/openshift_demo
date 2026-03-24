@@ -9,7 +9,7 @@
     rhel_image: "quay.io/containerdisks/rhel:9-full" # Example RHEL container disk
     disk_image: rhel9
   tasks:
-    - name: Create RHEL 9 VirtualMachine
+    - name: Create "{{ disk_image }}" VirtualMachine
       kubernetes.core.k8s:
         state: present
         definition:
