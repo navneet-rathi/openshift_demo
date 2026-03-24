@@ -44,6 +44,9 @@
                       - name: rootdisk
                         disk:
                           bus: virtio
+                      - name: cloudinitdisk
+                        disk: 
+                          bus: virtio    
                     interfaces:
                       - name: default
                         masquerade: {}
@@ -54,6 +57,13 @@
                   - name: rootdisk
                     containerDisk:
                       image: "{{ rhel_image }}"
+                  - name: cloudinitdisk
+                    cloudInitNoCloud:
+                      userData: |-
+                        #cloud-config
+                        user: cloud-user
+                        password: primod123
+                        chpasswd: { expire: False }  
                 # Cloud-init for initial setup (User: admin, Password: password123)
                 accessCredentials:
                   - sshPublicKey:
