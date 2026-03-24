@@ -23,7 +23,7 @@
             # Use label selectors to target the specific VM and its resources
             labelSelector:
               matchLabels:
-                vm.kubevirt.io/name: "{{ vm_name }}"
+                name: rhel9-copper-warbler-22
             # Ensure snapshots are taken for persistent volumes
             snapshotVolumes: true
             storageLocation: default
