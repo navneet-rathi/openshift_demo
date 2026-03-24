@@ -3,7 +3,7 @@
   hosts: localhost
   connection: local
   vars:
-    vm_name: "rhel9-web-server"
+    vm_name: "{{disk_image}}-web-server"
     namespace: "default"
     storage_class: "ocs-storagecluster-ceph-rbd" # Change to your RWX storage class
     rhel_image: "quay.io/containerdisks/rhel:9-full" # Example RHEL container disk
