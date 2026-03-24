@@ -1,0 +1,30 @@
+---
+- name: Backup OCP-V Virtual Machine
+  hosts: localhost
+  connection: local
+  vars:
+    vm_name: "rhel9-copper-warbler-22"
+    namespace: "default"
+    backup_name: "backup-{{ vm_name }}-{{ namespace }}-{{ ansible_date_time.iso8601_basic_short }}"
+
+  tasks:
+    - name: Create OADP Backup Resource for the VM
+      kubernetes.core.k8s:
+        state: present
+        definition:
+          apiVersion: velero.io/v1
+          kind: Backup
+          metadata:
+            name: "{{ backup_name }}"
+            namespace: openshift-adp
+          spec:
+            includedNamespaces:
+              - "{{ namespace }}"
+            # Use label selectors to target the specific VM and its resources
+            labelSelector:
+              matchLabels:
+                vm.kubevirt.io/name: "{{ vm_name }}"
+            # Ensure snapshots are taken for persistent volumes
+            snapshotVolumes: true
+            storageLocation: default
+            ttl: 720h0m0s  # Keep backup for 30 days
