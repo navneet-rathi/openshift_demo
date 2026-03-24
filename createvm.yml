@@ -7,7 +7,7 @@
     namespace: "default"
     storage_class: "ocs-storagecluster-ceph-rbd" # Change to your RWX storage class
     rhel_image: "quay.io/containerdisks/rhel:9-full" # Example RHEL container disk
-
+    disk_image: rhel9
   tasks:
     - name: Create RHEL 9 VirtualMachine
       kubernetes.core.k8s:
@@ -27,7 +27,7 @@
             labels:
               app: "{{vm_name}}"
               kubevirt.io/dynamic-credentials-support: 'true'
-              vm.kubevirt.io/template: rhel9-server-small
+              vm.kubevirt.io/template: "{{ disk_image }}-server-small"
               vm.kubevirt.io/template.namespace: openshift
               vm.kubevirt.io/template.revision: '1'
               vm.kubevirt.io/template.version: v0.32.2
@@ -40,7 +40,7 @@
                 spec:
                   sourceRef:
                     kind: DataSource
-                    name: rhel9
+                    name: "{{ disk_image }}"
                     namespace: openshift-virtualization-os-images
                   storage:
                     resources:
@@ -51,7 +51,7 @@
               metadata:
                 annotations:
                   vm.kubevirt.io/flavor: small
-                  vm.kubevirt.io/os: rhel9
+                  vm.kubevirt.io/os: "{{ disk_image }}"
                   vm.kubevirt.io/workload: server
                 labels:
                   kubevirt.io/domain: "{{vm_name}}"
